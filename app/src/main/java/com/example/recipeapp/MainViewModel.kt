@@ -12,10 +12,19 @@ class MainViewModel : ViewModel() {
     private val _categorieState = mutableStateOf(RecipeState())
     val categoriesState: State<RecipeState> = _categorieState //android compose runtime
 
+    init{
+        fetchCategories()
+    }
+
     private fun fetchCategories(){
         viewModelScope.launch {
             try {
-                val response = recipeService.getCategories
+                val response = recipeService.getCategories()
+                _categorieState.value = _categorieState.value.copy(
+                    list = response.categories,
+                    loading = false,
+                    error = null
+                )
             }catch (e: Exception){
                 _categorieState.value = _categorieState.value.copy(
                     loading=false,
